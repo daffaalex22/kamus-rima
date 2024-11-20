@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/table"
 import { useToast } from "@/hooks/use-toast"
 import { useState } from 'react';
+import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router-dom";
+
 
 const results = [
   {
@@ -47,8 +50,13 @@ const results = [
 export function RimaCard({ className, ...props }) {
   const { title, description, data } = props;
   const words = data?.length > 0 ? data : results
+
   const { toast } = useToast();
   const [copied, setCopied] = useState({});
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const word = searchParams.get("word")
 
   const handleCopy = async (id) => {
     await navigator.clipboard.writeText(id)
@@ -61,7 +69,7 @@ export function RimaCard({ className, ...props }) {
     <Card className={cn("w-[380px]", className)} {...props}>
       <CardHeader>
         <CardTitle>{title ?? "Rima Akhir Sempurna"}</CardTitle>
-        <CardDescription>{description ?? "Kesamaan pada suku kata terakhir"}</CardDescription>
+        <CardDescription>{description ?? "Persamaan bunyi pada suku kata terakhir"}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <Table>
@@ -84,7 +92,12 @@ export function RimaCard({ className, ...props }) {
         </Table>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">
+        <Button 
+          className="w-full"
+          onClick={() => (
+            navigate(`/details/${word}/${title.toLowerCase().replace(/\s+/g, '-')}`
+          ))}
+        >
           Selengkapnya...
         </Button>
       </CardFooter>

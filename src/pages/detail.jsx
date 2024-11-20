@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Input } from "@/components/ui/input";
 import { Toaster } from "@/components/ui/toaster";
+import { useParams } from 'react-router';
+import { useToast } from '@/hooks/use-toast';
 
 const words = {
   1: [
@@ -81,6 +83,14 @@ const words = {
 }
 
 const SearchDetails = () => {
+  const { word, rimaType } = useParams();
+  const { toast } = useToast();
+
+  const handleCopy = async (id) => {
+    await navigator.clipboard.writeText(id)
+    toast({ description: "Teks berhasil disalin.", className: "max-w-[225px] bottom-4 absolute right-10" });
+  }
+
   return (
     <>
       <Toaster />
@@ -93,13 +103,18 @@ const SearchDetails = () => {
           </div>
         </div>
         <br />
-        <h4 className="scroll-m-20 text-md font-semibold tracking-tight">Rima Akhir Sempurna untuk: <i>persatuan</i></h4>
+        <h4 className="scroll-m-20 text-md font-semibold tracking-tight">{rimaType.replace(/\b\w/g, char => char.toUpperCase()).replace(/-/g, " ")} untuk: <i>{word}</i></h4>
       </div>
 
       {/* Content */}
       {Object.keys(words).map(key => (
         words[key].map(w => (
-          <Button key={`${w}`} variant='outline' className='m-1 mt-2'>
+          <Button 
+            key={w.title} 
+            variant='outline' 
+            className='m-1 mt-2'
+            onClick={() => handleCopy(w.title)}
+          >
             {w.title}
           </Button>
         ))

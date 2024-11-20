@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route exact path='/' element={<Home />}/>
           <Route path='/search' element={<Search />}/>
-          <Route path='/search/details' element={<SearchDetails />}/>
+          <Route path='/details/:word/:rimaType' element={<SearchDetails />}/>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
