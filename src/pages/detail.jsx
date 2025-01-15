@@ -5,91 +5,16 @@ import { Toaster } from "@/components/ui/toaster";
 import { useParams } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, limit, query } from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { get, ref, query as rdbQuery, limitToFirst, } from "firebase/database";
 import { firestore, rdb } from "../../firebase";
-
-const words = {
-  1: [
-    {
-      title: 'kan',
-      numOfSyllables: 1
-    },
-    {
-      title: 'ban',
-      numOfSyllables: 1
-    },
-    {
-      title: 'tan',
-      numOfSyllables: 1
-    },
-  ],
-  2: [
-    {
-      title: 'akan',
-      numOfSyllables: 2
-    },
-    {
-      title: 'makan',
-      numOfSyllables: 2
-    },
-    {
-      title: 'santan',
-      numOfSyllables: 2
-    },
-  ],
-  3: [
-    {
-      title: 'selokan',
-      numOfSyllables: 3
-    },
-    {
-      title: 'penampan',
-      numOfSyllables: 3
-    },
-    {
-      title: 'rambutan',
-      numOfSyllables: 3
-    },
-  ],
-  4: [
-    {
-      title: 'perampokan',
-      numOfSyllables: 4
-    },
-    {
-      title: 'pengunggahan',
-      numOfSyllables: 4
-    },
-    {
-      title: 'perambanan',
-      numOfSyllables: 4
-    },
-    {
-      title: 'pengakuan',
-      numOfSyllables: 4
-    },
-    
-    {
-      title: 'kenyamanan',
-      numOfSyllables: 4
-    },
-    {
-      title: 'keamanan',
-      numOfSyllables: 4
-    },
-    {
-      title: 'pengaturan',
-      numOfSyllables: 4
-    },
-
-  ]
-}
+import { segmenter } from '../segmenter';
+import { codeToRimaType, RIMA } from '../utils';
 
 const SearchDetails = () => {
   const [data, setData] = useState([]);
   const [rdbData, setRDBData] = useState([]);
-  const { word, rimaType } = useParams();
+  const { word, rimaTypeCode } = useParams();
   const { toast } = useToast();
 
   const handleCopy = async (id) => {
@@ -98,11 +23,44 @@ const SearchDetails = () => {
   }
 
   useEffect(() => {
+    const { 
+      lastSyllable,
+      lastTwoSyllables,
+      firstSyllable,
+      secondLastSyllable,
+      lastSound
+    } = segmenter(word);
+
+    const conditions = []
+
+    switch (codeToRimaType[rimaTypeCode]) {
+      case RIMA.AKHIR_SEMPURNA:
+        conditions.push(where("lastSyllable", "==", lastSyllable));
+        break;
+      case RIMA.AKHIR_GANDA:
+        conditions.push(where("lastTwoSyllables", "==", lastTwoSyllables));
+        break;
+      case RIMA.AKHIR_TAK_SEMPURNA:
+        conditions.push(where("lastSound", "==", lastSound));
+        conditions.push(where("lastSyllable", "!=", lastSyllable));
+        break;
+      case RIMA.AWAL:
+        conditions.push(where("firstSyllable", "==", firstSyllable));
+        break;
+      // TODO: Fix the query for rima konsonan and rima akhir ganda tak sempurna
+      default:
+        // TODO: FIX THIS, STILL USING THE WRONG WAY TO QUERY
+        conditions.push(where("lastSyllable", "==", lastSyllable));
+        break;
+    }
+
     const fetchData = async () => {
       const querySnapshot = await getDocs(
         query(
           collection(firestore, "entries"),
-          limit(10)
+          limit(50),
+          // orderBy("numOfSyllables", "desc"),
+          ...conditions
         )
       );
       const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -126,7 +84,7 @@ const SearchDetails = () => {
 
     fetchData();
     fetchRDBData();
-  }, []);
+  }, [word, rimaTypeCode]);
 
   return (
     <>
@@ -140,41 +98,36 @@ const SearchDetails = () => {
           </div>
         </div>
         <br />
-        <h4 className="scroll-m-20 text-md font-semibold tracking-tight">{rimaType.replace(/\b\w/g, char => char.toUpperCase()).replace(/-/g, " ")} untuk: <i>{word}</i></h4>
+        <h4 className="scroll-m-20 text-md font-semibold tracking-tight">{codeToRimaType[rimaTypeCode].replace(/\b\w/g, char => char.toUpperCase()).replace(/-/g, " ")} untuk: <i>{word}</i></h4>
       </div>
 
       {/* Content */}
-      {Object.keys(words).map(key => (
-        words[key].map(w => (
+      {data.map((item, index) => (
           <Button 
-            key={w.title} 
+            key={index} 
             variant='outline' 
             className='m-1 mt-2'
-            onClick={() => handleCopy(w.title)}
+            onClick={() => handleCopy(item.title)}
           >
-            {w.title}
+            {item.title}
           </Button>
         ))
-      ))}
-
-      {/* Data */}
-      <div className="p-5">
-        <h1 className="text-xl font-semibold">Data</h1>
-        <ul>
-          {data.map((item, index) => (
-            <li key={index}>{item.title}</li>
-          ))}
-        </ul>
-      </div>
+      }
 
       {/* RDB Data */}
       <div className="p-5">
         <h1 className="text-xl font-semibold">RDB Data</h1>
-        <ul>
-          {rdbData.map((item, index) => (
-            <li key={index}>{item.title}</li>
-          ))}
-        </ul>
+        {rdbData.map((item, index) => (
+            <Button 
+              key={index} 
+              variant='outline' 
+              className='m-1 mt-2'
+              onClick={() => handleCopy(item.title)}
+            >
+              {item.title}
+            </Button>
+          ))
+        }
       </div>
     </>
   );

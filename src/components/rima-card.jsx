@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
+import { getRimaTypeFromTitle, rimaTypeToCode } from "../utils";
 
 
 const results = [
@@ -50,6 +51,9 @@ const results = [
 export function RimaCard({ className, ...props }) {
   const { title, description, data } = props;
   const words = data?.length > 0 ? data : results
+
+  const rimaType = getRimaTypeFromTitle(title);
+  const rimaTypeCode = rimaTypeToCode[rimaType];
 
   const { toast } = useToast();
   const [copied, setCopied] = useState({});
@@ -95,7 +99,7 @@ export function RimaCard({ className, ...props }) {
         <Button 
           className="w-full"
           onClick={() => (
-            navigate(`/details/${word}/${title.toLowerCase().replace(/\s+/g, '-')}`
+            navigate(`/details/${word}/${rimaTypeCode}`
           ))}
         >
           Selengkapnya...
