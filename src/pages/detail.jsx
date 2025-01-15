@@ -4,6 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Toaster } from "@/components/ui/toaster";
 import { useParams } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
+import { useEffect, useState } from 'react';
+import { collection, getDocs, limit, query } from "firebase/firestore";
+import { get, ref, query as rdbQuery, limitToFirst, } from "firebase/database";
+import { firestore, rdb } from "../../firebase";
 
 const words = {
   1: [
@@ -83,6 +87,8 @@ const words = {
 }
 
 const SearchDetails = () => {
+  const [data, setData] = useState([]);
+  const [rdbData, setRDBData] = useState([]);
   const { word, rimaType } = useParams();
   const { toast } = useToast();
 
@@ -90,6 +96,37 @@ const SearchDetails = () => {
     await navigator.clipboard.writeText(id)
     toast({ description: "Teks berhasil disalin.", className: "max-w-[225px] bottom-4 absolute right-10" });
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(
+        query(
+          collection(firestore, "entries"),
+          limit(10)
+        )
+      );
+      const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setData(items);
+    };
+
+    const fetchRDBData = async () => {
+      const dataRef = ref(rdb, "entries");
+
+      try {
+        const snapshot = await get(rdbQuery(dataRef, limitToFirst(10)));
+        if (snapshot.exists()) {
+          setRDBData(Object.values(snapshot.val()));
+        } else {
+          console.log("No data available");
+        }
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    }
+
+    fetchData();
+    fetchRDBData();
+  }, []);
 
   return (
     <>
@@ -119,6 +156,26 @@ const SearchDetails = () => {
           </Button>
         ))
       ))}
+
+      {/* Data */}
+      <div className="p-5">
+        <h1 className="text-xl font-semibold">Data</h1>
+        <ul>
+          {data.map((item, index) => (
+            <li key={index}>{item.title}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* RDB Data */}
+      <div className="p-5">
+        <h1 className="text-xl font-semibold">RDB Data</h1>
+        <ul>
+          {rdbData.map((item, index) => (
+            <li key={index}>{item.title}</li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 }
