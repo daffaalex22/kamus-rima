@@ -31,37 +31,37 @@ const Search = () => {
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AKHIR_SEMPURNA, 
-      { limit: 7 }
+      { limit: 5 }
     ).then(({ items }) => setRASData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AKHIR_TAK_SEMPURNA, 
-      { limit: 7 }
+      { limit: 5 }
     ).then(({ items }) => setRATSData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AKHIR_GANDA, 
-      { limit: 7 }
+      { limit: 5 }
     ).then(({ items }) => setRAGData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AKHIR_GANDA_TAK_SEMPURNA, 
-      { limit: 7 }
+      { limit: 5 }
     ).then(({ items }) => setRAGTSData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AWAL, 
-      { limit: 7 }
+      { limit: 5 }
     ).then(({ items }) => setRAData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.KONSONAN, 
-      { limit: 7 }
+      { limit: 5 }
     ).then(({ items }) => setRKData(items)); 
   }, [word])
 
@@ -88,6 +88,13 @@ const Search = () => {
       <div className="flex min-h-full items-start justify-evenly mt-14">
         <div className="flex w-full max-w-sm space-x-2">
           <RimaCard
+            data={RAData}
+            title="Rima Awal"
+            description="Persamaan bunyi pada suku kata pertama"
+          />
+        </div>
+        <div className="flex w-full max-w-sm space-x-2">
+          <RimaCard
             data={RASData}
             title="Rima Akhir Sempurna"
             description="Persamaan bunyi pada suku kata terakhir"
@@ -100,6 +107,8 @@ const Search = () => {
             description="Persamaan bunyi pada bagian suku kata terakhir"
           />
         </div>
+      </div>
+      <div className="flex min-h-full items-start justify-evenly mt-14">
         <div className="flex w-full max-w-sm space-x-2">
           <RimaCard
             data={RAGData}
@@ -107,8 +116,6 @@ const Search = () => {
             description="Persamaan bunyi pada dua suku kata terakhir"
           />
         </div>
-      </div>
-      <div className="flex min-h-full items-start justify-evenly mt-14">
         {/* <div className="flex w-full max-w-sm space-x-2">
           <RimaCard
             data={RAGTSData}
@@ -116,13 +123,6 @@ const Search = () => {
             description="Persamaan bunyi pada bagian dua suku kata terakhir"
           />
         </div> */}
-        <div className="flex w-full max-w-sm space-x-2">
-          <RimaCard
-            data={RAData}
-            title="Rima Awal"
-            description="Persamaan bunyi pada suku kata pertama"
-          />
-        </div>
         {/* <div className="flex w-full max-w-sm space-x-2">
           <RimaCard
             data={RKData}
