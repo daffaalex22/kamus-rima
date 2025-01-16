@@ -1,4 +1,4 @@
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import { collection, getDocs, limit, query, startAfter, where } from "firebase/firestore";
 import { segmenter } from "./segmenter";
 import { firestore } from "../firebase";
 
@@ -77,6 +77,10 @@ const getFirestoreConditions = (word, rimaTypeCode) => {
 const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
   const conditions = getFirestoreConditions(word, rimaTypeCode)
 
+  if (opts?.lastIndex) {
+    conditions.push(startAfter(opts?.lastIndex))
+  }
+
   const fetchData = async () => {
     const querySnapshot = await getDocs(
       query(
@@ -88,7 +92,9 @@ const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
     );
 
     const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    return items
+    const lastIndex = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+    return { items, lastIndex }
   };
 
   // const fetchRDBData = async () => {

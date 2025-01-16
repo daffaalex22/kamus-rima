@@ -32,37 +32,37 @@ const Search = () => {
       word,
       RIMA_CODE.AKHIR_SEMPURNA, 
       { limit: 7 }
-    ).then((items) => setRASData(items)); 
+    ).then(({ items }) => setRASData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AKHIR_TAK_SEMPURNA, 
       { limit: 7 }
-    ).then((items) => setRATSData(items)); 
+    ).then(({ items }) => setRATSData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AKHIR_GANDA, 
       { limit: 7 }
-    ).then((items) => setRAGData(items)); 
+    ).then(({ items }) => setRAGData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AKHIR_GANDA_TAK_SEMPURNA, 
       { limit: 7 }
-    ).then((items) => setRAGTSData(items)); 
+    ).then(({ items }) => setRAGTSData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.AWAL, 
       { limit: 7 }
-    ).then((items) => setRAData(items)); 
+    ).then(({ items }) => setRAData(items)); 
 
     fetchWordsRhymeWith(
       word,
       RIMA_CODE.KONSONAN, 
       { limit: 7 }
-    ).then((items) => setRKData(items)); 
+    ).then(({ items }) => setRKData(items)); 
   }, [word])
 
 

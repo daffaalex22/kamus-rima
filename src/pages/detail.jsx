@@ -9,13 +9,14 @@ import { codeToRimaType, fetchWordsRhymeWith } from '../utils';
 
 const SearchDetails = () => {
   const [data, setData] = useState([]);
+  const [lastIndex, setLastIndex] = useState(0);
+  
   const { word, rimaTypeCode } = useParams();
   const { toast } = useToast();
 
   const navigate = useNavigate();
 
   const [searchWord, setSearchWord] = useState("")
-
   const handleChange = (event) => {
     setSearchWord(event.target.value.toLowerCase());
   };
@@ -26,10 +27,18 @@ const SearchDetails = () => {
   }
 
   useEffect(() => {
-    fetchWordsRhymeWith(word, rimaTypeCode).then((items) => {
+    fetchWordsRhymeWith(word, rimaTypeCode).then(({ items, lastIndex: index }) => {
       setData(items);
+      setLastIndex(index);
     })
   }, [word, rimaTypeCode]);
+
+  const handleMore = () => {
+    fetchWordsRhymeWith(word, rimaTypeCode, { lastIndex }).then(({ items, lastIndex: index }) => {
+      setData(prevData => [...prevData, ...items]);
+      setLastIndex(index);
+    })
+  }
 
   return (
     <>
@@ -65,7 +74,7 @@ const SearchDetails = () => {
       }
       <Button
         className='m-1 mt-2'
-        onClick={() => {}}
+        onClick={() => handleMore()}
       >
         Lebih banyak...
       </Button>
