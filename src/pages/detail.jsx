@@ -5,15 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { useNavigate, useParams } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
-import { get, ref, query as rdbQuery, limitToFirst, } from "firebase/database";
-import { firestore, rdb } from "../../firebase";
-import { segmenter } from '../segmenter';
-import { codeToRimaType, RIMA } from '../utils';
+import { codeToRimaType, fetchWordsRhymeWith } from '../utils';
 
 const SearchDetails = () => {
   const [data, setData] = useState([]);
-  const [rdbData, setRDBData] = useState([]);
   const { word, rimaTypeCode } = useParams();
   const { toast } = useToast();
 
@@ -31,67 +26,9 @@ const SearchDetails = () => {
   }
 
   useEffect(() => {
-    const { 
-      lastSyllable,
-      lastTwoSyllables,
-      firstSyllable,
-      secondLastSyllable,
-      lastSound
-    } = segmenter(word);
-
-    const conditions = []
-
-    switch (codeToRimaType[rimaTypeCode]) {
-      case RIMA.AKHIR_SEMPURNA:
-        conditions.push(where("lastSyllable", "==", lastSyllable));
-        break;
-      case RIMA.AKHIR_GANDA:
-        conditions.push(where("lastTwoSyllables", "==", lastTwoSyllables));
-        break;
-      case RIMA.AKHIR_TAK_SEMPURNA:
-        conditions.push(where("lastSound", "==", lastSound));
-        conditions.push(where("lastSyllable", "!=", lastSyllable));
-        break;
-      case RIMA.AWAL:
-        conditions.push(where("firstSyllable", "==", firstSyllable));
-        break;
-      // TODO: Fix the query for rima konsonan and rima akhir ganda tak sempurna
-      default:
-        // TODO: FIX THIS, STILL USING THE WRONG WAY TO QUERY
-        conditions.push(where("lastSyllable", "==", lastSyllable));
-        break;
-    }
-
-    const fetchData = async () => {
-      const querySnapshot = await getDocs(
-        query(
-          collection(firestore, "entries"),
-          limit(50),
-          // orderBy("numOfSyllables", "desc"),
-          ...conditions
-        )
-      );
-      const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    fetchWordsRhymeWith(word, rimaTypeCode).then((items) => {
       setData(items);
-    };
-
-    const fetchRDBData = async () => {
-      const dataRef = ref(rdb, "entries");
-
-      try {
-        const snapshot = await get(rdbQuery(dataRef, limitToFirst(10)));
-        if (snapshot.exists()) {
-          setRDBData(Object.values(snapshot.val()));
-        } else {
-          console.log("No data available");
-        }
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    }
-
-    fetchData();
-    fetchRDBData();
+    })
   }, [word, rimaTypeCode]);
 
   return (
@@ -127,21 +64,6 @@ const SearchDetails = () => {
         ))
       }
 
-      {/* RDB Data */}
-      <div className="p-5">
-        <h1 className="text-xl font-semibold">RDB Data</h1>
-        {rdbData.map((item, index) => (
-            <Button 
-              key={index} 
-              variant='outline' 
-              className='m-1 mt-2'
-              onClick={() => handleCopy(item.title)}
-            >
-              {item.title}
-            </Button>
-          ))
-        }
-      </div>
     </>
   );
 }

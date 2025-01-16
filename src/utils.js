@@ -1,3 +1,7 @@
+import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import { segmenter } from "./segmenter";
+import { firestore } from "../firebase";
+
 const RIMA = {
   AKHIR_SEMPURNA: 'rima-akhir-sempurna',
   AKHIR_TAK_SEMPURNA: 'rima-akhir-tak-sempurna',
@@ -5,6 +9,15 @@ const RIMA = {
   AKHIR_GANDA_TAK_SEMPURNA: 'rima-akhir-ganda-tak-sempurna',
   AWAL: 'rima-awal',
   KONSONAN: 'rima-konsonan',
+}
+
+const RIMA_CODE = {
+  AKHIR_SEMPURNA: 1,
+  AKHIR_TAK_SEMPURNA: 2,
+  AKHIR_GANDA: 3,
+  AKHIR_GANDA_TAK_SEMPURNA: 4,
+  AWAL: 5,
+  KONSONAN: 6,
 }
 
 const codeToRimaType = {
@@ -27,4 +40,67 @@ const rimaTypeToCode = {
 
 const getRimaTypeFromTitle = (title) => title.toLowerCase().replace(/\s+/g, '-');
 
-export { getRimaTypeFromTitle, codeToRimaType, rimaTypeToCode, RIMA };
+const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
+  const {
+    lastSyllable,
+    lastTwoSyllables,
+    firstSyllable,
+    lastSound
+  } = segmenter(word);
+
+  const conditions = []
+
+  switch (codeToRimaType[rimaTypeCode]) {
+    case RIMA.AKHIR_SEMPURNA:
+      conditions.push(where("lastSyllable", "==", lastSyllable));
+      break;
+    case RIMA.AKHIR_GANDA:
+      conditions.push(where("lastTwoSyllables", "==", lastTwoSyllables));
+      break;
+    case RIMA.AKHIR_TAK_SEMPURNA:
+      conditions.push(where("lastSound", "==", lastSound));
+      conditions.push(where("lastSyllable", "!=", lastSyllable));
+      break;
+    case RIMA.AWAL:
+      conditions.push(where("firstSyllable", "==", firstSyllable));
+      break;
+    // TODO: Fix the query for rima konsonan and rima akhir ganda tak sempurna
+    default:
+      // TODO: FIX THIS, STILL USING THE WRONG WAY TO QUERY
+      conditions.push(where("lastSyllable", "==", lastSyllable));
+      break;
+  }
+
+  const fetchData = async () => {
+    const querySnapshot = await getDocs(
+      query(
+        collection(firestore, "entries"),
+        limit(opts?.limit || 50),
+        // orderBy("numOfSyllables", "desc"),
+        ...conditions
+      )
+    );
+    const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return items
+  };
+
+  // const fetchRDBData = async () => {
+  //   const dataRef = ref(rdb, "entries");
+
+  //   try {
+  //     const snapshot = await get(rdbQuery(dataRef, limitToFirst(10)));
+  //     if (snapshot.exists()) {
+  //       setRDBData(Object.values(snapshot.val()));
+  //     } else {
+  //       console.log("No data available");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching data: ", error);
+  //   }
+  // }
+
+  return fetchData();
+  // fetchRDBData();
+}
+
+export { getRimaTypeFromTitle, codeToRimaType, rimaTypeToCode, RIMA, fetchWordsRhymeWith, RIMA_CODE };

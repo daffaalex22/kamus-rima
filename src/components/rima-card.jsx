@@ -21,36 +21,11 @@ import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import { getRimaTypeFromTitle, rimaTypeToCode } from "../utils";
 
-
-const results = [
-  {
-    title: "persatuan"
-  },
-  {
-    title: "perampokan"
-  },
-  {
-    title: "sambutan"
-  },
-  {
-    title: "perumahan"
-  },
-  {
-    title: "kebanggaan"
-  },
-  {
-    title: "tersampaikan"
-  },
-  {
-    title: "pengakuan"
-  }
-]
-
 // type CardProps = React.ComponentProps<typeof Card>
 
 export function RimaCard({ className, ...props }) {
   const { title, description, data } = props;
-  const words = data?.length > 0 ? data : results
+  const words = data?.length > 0 ? data : []
 
   const rimaType = getRimaTypeFromTitle(title);
   const rimaTypeCode = rimaTypeToCode[rimaType];
