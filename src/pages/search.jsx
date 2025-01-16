@@ -109,13 +109,13 @@ const Search = () => {
         </div>
       </div>
       <div className="flex min-h-full items-start justify-evenly mt-14">
-        <div className="flex w-full max-w-sm space-x-2">
+        {/* <div className="flex w-full max-w-sm space-x-2">
           <RimaCard
             data={RAGTSData}
             title="Rima Akhir Ganda Tak Sempurna"
             description="Persamaan bunyi pada bagian dua suku kata terakhir"
           />
-        </div>
+        </div> */}
         <div className="flex w-full max-w-sm space-x-2">
           <RimaCard
             data={RAData}
@@ -123,13 +123,13 @@ const Search = () => {
             description="Persamaan bunyi pada suku kata pertama"
           />
         </div>
-        <div className="flex w-full max-w-sm space-x-2">
+        {/* <div className="flex w-full max-w-sm space-x-2">
           <RimaCard
             data={RKData}
             title="Rima Konsonan"
             description="Urutan konsonan yang sama"
           />
-        </div>
+        </div> */}
       </div>
     </>
   );
