@@ -3,7 +3,8 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { Input } from "@/components/ui/input";
 import { RimaCard } from '../components/rima-card';
 import { Toaster } from "@/components/ui/toaster";
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 
 const RAS = {
   1: [
@@ -464,6 +465,14 @@ const RK = {
 const Search = () => {
   const [searchParams] = useSearchParams();
   const word = searchParams.get("word");
+  
+  const navigate = useNavigate();
+
+  const [searchWord, setSearchWord] = useState("")
+
+  const handleChange = (event) => {
+    setSearchWord(event.target.value.toLowerCase());
+  };
 
   // Getting the rima data of `word` here
 
@@ -474,8 +483,13 @@ const Search = () => {
         <div className="flex items-center justify-center z-5 bg-background">
           <div className="flex w-full max-w-sm space-x-2 bg-inherit">
             <ModeToggle />
-            <Input placeholder="Masukkan Kata" />
-            <Button type="submit">Temukan Rima</Button>
+            <Input 
+              placeholder="Masukkan Kata"
+              type="text"
+              value={searchWord}
+              onChange={handleChange}
+            />
+            <Button type="submit" onClick={() => navigate(`/search?word=${searchWord}`)}>Temukan Rima</Button>
           </div>
         </div>
       </div>

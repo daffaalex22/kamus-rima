@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Input } from "@/components/ui/input";
 import { Toaster } from "@/components/ui/toaster";
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
 import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
@@ -16,6 +16,14 @@ const SearchDetails = () => {
   const [rdbData, setRDBData] = useState([]);
   const { word, rimaTypeCode } = useParams();
   const { toast } = useToast();
+
+  const navigate = useNavigate();
+
+  const [searchWord, setSearchWord] = useState("")
+
+  const handleChange = (event) => {
+    setSearchWord(event.target.value.toLowerCase());
+  };
 
   const handleCopy = async (id) => {
     await navigator.clipboard.writeText(id)
@@ -92,9 +100,14 @@ const SearchDetails = () => {
       <div className="sticky top-0 p-5 left-0 w-full bg-background z-10 shadow-sm">
         <div className="flex items-center justify-center z-5 bg-background">
           <div className="flex w-full max-w-sm space-x-2 bg-inherit">
-            <ModeToggle />
-            <Input placeholder="Masukkan Kata" />
-            <Button type="submit">Temukan Rima</Button>
+          <ModeToggle />
+            <Input 
+              placeholder="Masukkan Kata"
+              type="text"
+              value={searchWord}
+              onChange={handleChange}
+            />
+            <Button type="submit" onClick={() => navigate(`/search?word=${searchWord}`)}>Temukan Rima</Button>
           </div>
         </div>
         <br />
