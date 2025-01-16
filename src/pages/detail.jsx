@@ -63,6 +63,12 @@ const SearchDetails = () => {
           </Button>
         ))
       }
+      <Button
+        className='m-1 mt-2'
+        onClick={() => {}}
+      >
+        Lebih banyak...
+      </Button>
 
     </>
   );

@@ -40,7 +40,7 @@ const rimaTypeToCode = {
 
 const getRimaTypeFromTitle = (title) => title.toLowerCase().replace(/\s+/g, '-');
 
-const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
+const getFirestoreConditions = (word, rimaTypeCode) => {
   const {
     lastSyllable,
     lastTwoSyllables,
@@ -71,6 +71,12 @@ const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
       break;
   }
 
+  return conditions;
+}
+
+const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
+  const conditions = getFirestoreConditions(word, rimaTypeCode)
+
   const fetchData = async () => {
     const querySnapshot = await getDocs(
       query(
@@ -80,6 +86,7 @@ const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
         ...conditions
       )
     );
+
     const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return items
   };
