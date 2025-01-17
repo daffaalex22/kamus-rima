@@ -19,37 +19,16 @@ import { useToast } from "@/hooks/use-toast"
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
-
-
-const results = [
-  {
-    title: "persatuan"
-  },
-  {
-    title: "perampokan"
-  },
-  {
-    title: "sambutan"
-  },
-  {
-    title: "perumahan"
-  },
-  {
-    title: "kebanggaan"
-  },
-  {
-    title: "tersampaikan"
-  },
-  {
-    title: "pengakuan"
-  }
-]
+import { getRimaTypeFromTitle, rimaTypeToCode } from "../utils";
 
 // type CardProps = React.ComponentProps<typeof Card>
 
 export function RimaCard({ className, ...props }) {
   const { title, description, data } = props;
-  const words = data?.length > 0 ? data : results
+  const words = data?.length > 0 ? data : []
+
+  const rimaType = getRimaTypeFromTitle(title);
+  const rimaTypeCode = rimaTypeToCode[rimaType];
 
   const { toast } = useToast();
   const [copied, setCopied] = useState({});
@@ -60,7 +39,10 @@ export function RimaCard({ className, ...props }) {
 
   const handleCopy = async (id) => {
     await navigator.clipboard.writeText(id)
-    toast({ description: "Teks berhasil disalin.", className: "max-w-[225px] bottom-4 absolute right-10" });
+    toast({ 
+      description: "Teks berhasil disalin.",
+      className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10"
+    });
     setCopied((prev) => ({ ...prev, [id]: true }));
     setTimeout(() => setCopied((prev) => ({ ...prev, [id]: false })), 2000);
   }
@@ -95,7 +77,7 @@ export function RimaCard({ className, ...props }) {
         <Button 
           className="w-full"
           onClick={() => (
-            navigate(`/details/${word}/${title.toLowerCase().replace(/\s+/g, '-')}`
+            navigate(`/details/${word}/${rimaTypeCode}`
           ))}
         >
           Selengkapnya...

@@ -27,7 +27,7 @@ export function Toaster() {
           </Toast>)
         );
       })}
-      <ToastViewport />
+      <ToastViewport className="max-sm:inset-x-0"/>
     </ToastProvider>)
   );
 }
