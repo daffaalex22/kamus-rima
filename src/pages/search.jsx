@@ -23,9 +23,9 @@ const Search = () => {
   const [RASData, setRASData] = useState([]);
   const [RATSData, setRATSData] = useState([]);
   const [RAGData, setRAGData] = useState([]);
-  const [RAGTSData, setRAGTSData] = useState([]);
   const [RAData, setRAData] = useState([]);
-  const [RKData, setRKData] = useState([]);
+  // const [RAGTSData, setRAGTSData] = useState([]);
+  // const [RKData, setRKData] = useState([]);
 
   useEffect(() => {
     fetchWordsRhymeWith(
@@ -48,21 +48,21 @@ const Search = () => {
 
     fetchWordsRhymeWith(
       word,
-      RIMA_CODE.AKHIR_GANDA_TAK_SEMPURNA, 
-      { limit: 5 }
-    ).then(({ items }) => setRAGTSData(items)); 
-
-    fetchWordsRhymeWith(
-      word,
       RIMA_CODE.AWAL, 
       { limit: 5 }
     ).then(({ items }) => setRAData(items)); 
 
-    fetchWordsRhymeWith(
-      word,
-      RIMA_CODE.KONSONAN, 
-      { limit: 5 }
-    ).then(({ items }) => setRKData(items)); 
+    // fetchWordsRhymeWith(
+    //   word,
+    //   RIMA_CODE.AKHIR_GANDA_TAK_SEMPURNA, 
+    //   { limit: 5 }
+    // ).then(({ items }) => setRAGTSData(items)); 
+
+    // fetchWordsRhymeWith(
+    //   word,
+    //   RIMA_CODE.KONSONAN, 
+    //   { limit: 5 }
+    // ).then(({ items }) => setRKData(items)); 
   }, [word])
 
 
