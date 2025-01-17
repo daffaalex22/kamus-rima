@@ -39,7 +39,10 @@ export function RimaCard({ className, ...props }) {
 
   const handleCopy = async (id) => {
     await navigator.clipboard.writeText(id)
-    toast({ description: "Teks berhasil disalin.", className: "max-w-[225px] bottom-4 absolute right-10" });
+    toast({ 
+      description: "Teks berhasil disalin.",
+      className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10"
+    });
     setCopied((prev) => ({ ...prev, [id]: true }));
     setTimeout(() => setCopied((prev) => ({ ...prev, [id]: false })), 2000);
   }

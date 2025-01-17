@@ -4,10 +4,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
 import Search from './pages/search';
 import SearchDetails from './pages/detail';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
 
   return (
+    <>
+    <Toaster />
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
@@ -17,6 +20,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
+    </>
   )
 }
 

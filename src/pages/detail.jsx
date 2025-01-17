@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Input } from "@/components/ui/input";
-import { Toaster } from "@/components/ui/toaster";
 import { useNavigate, useParams } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
@@ -23,7 +22,10 @@ const SearchDetails = () => {
 
   const handleCopy = async (id) => {
     await navigator.clipboard.writeText(id)
-    toast({ description: "Teks berhasil disalin.", className: "max-w-[225px] bottom-4 absolute right-10" });
+    toast({ 
+      description: "Teks berhasil disalin.", 
+      className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10" 
+    });
   }
 
   useEffect(() => {
@@ -42,7 +44,6 @@ const SearchDetails = () => {
 
   return (
     <>
-      <Toaster />
       <div className="sticky top-0 p-5 left-0 w-full bg-background z-10 shadow-sm">
         <div className="flex items-center justify-center z-5 bg-background">
           <div className="flex w-full max-w-sm space-x-2 bg-inherit">

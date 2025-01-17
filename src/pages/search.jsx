@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Input } from "@/components/ui/input";
 import { RimaCard } from '../components/rima-card';
-import { Toaster } from "@/components/ui/toaster";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchWordsRhymeWith, RIMA_CODE } from '../utils';
@@ -68,7 +67,6 @@ const Search = () => {
 
   return (
     <>
-      <Toaster />
       <div className="sticky top-0 py-5 sm:p-5 left-0 w-full bg-background z-10 shadow-sm">
         <div className="flex items-center justify-center z-5 bg-background">
           <div className="flex w-full max-w-sm space-x-2 bg-inherit">
