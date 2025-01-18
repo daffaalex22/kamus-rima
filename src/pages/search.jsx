@@ -1,22 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { ModeToggle } from '@/components/mode-toggle';
-import { Input } from "@/components/ui/input";
 import { RimaCard } from '../components/rima-card';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchWordsRhymeWith, RIMA_CODE } from '../utils';
+import MainForm from './../components/main-form';
 
 const Search = () => {
   const [searchParams] = useSearchParams();
   const word = searchParams.get("word");
-  
-  const navigate = useNavigate();
-
-  const [searchWord, setSearchWord] = useState("")
-
-  const handleChange = (event) => {
-    setSearchWord(event.target.value.toLowerCase());
-  };
 
   // Getting the rima data of `word` here
   const [RASData, setRASData] = useState([]);
@@ -69,16 +59,7 @@ const Search = () => {
     <>
       <div className="sticky top-0 py-5 sm:p-5 left-0 w-full bg-background z-10 shadow-sm">
         <div className="flex items-center justify-center z-5 bg-background">
-          <div className="flex w-full max-w-sm space-x-2 bg-inherit">
-            <ModeToggle />
-            <Input 
-              placeholder="Masukkan kata..."
-              type="text"
-              value={searchWord}
-              onChange={handleChange}
-            />
-            <Button type="submit" onClick={() => navigate(`/search?word=${searchWord}`)}>Temukan rima</Button>
-          </div>
+          <MainForm />
         </div>
         <h4 className="scroll-m-20 mt-5 text-md font-semibold tracking-tight">Menampilkan hasil untuk: <i>{word}</i></h4>
       </div>
