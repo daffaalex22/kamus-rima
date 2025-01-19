@@ -1,29 +1,41 @@
-import { Button } from '@/components/ui/button';
-import { ModeToggle } from '@/components/mode-toggle';
-import { Input } from "@/components/ui/input";
-import { useNavigate } from 'react-router';
-import { useState } from 'react';
+import MainForm from './../components/main-form';
+import WordRotate from './../components/ui/word-rotate';
+import { useTheme } from '@/components/theme-provider';
+import Particles from './../components/ui/particles';
+import { useEffect, useState } from 'react';
 
 const Home = () => {
-  const navigate = useNavigate();
-  const [searchWord, setSearchWord] = useState("")
+  const { theme } = useTheme();
+  const [color, setColor] = useState("#ffffff");
 
-  const handleChange = (event) => {
-    setSearchWord(event.target.value.toLowerCase());
-  };
+  useEffect(() => {
+    setColor(theme === "dark" ? "#ffffff" : "#000000");
+  }, [theme]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="flex w-full max-w-sm space-x-2">
-        <ModeToggle />
-        <Input 
-          placeholder="Masukkan Kata"
-          type="text"
-          value={searchWord}
-          onChange={handleChange}
-        />
-        <Button onClick={() => navigate(`/search?word=${searchWord}`)}>Temukan Rima</Button>
+    
+    <div className="flex flex-wrap flex-col min-h-screen items-center justify-center">
+      <Particles
+        className="absolute inset-0 z-0"
+        quantity={200}
+        ease={80}
+        color={color}
+        refresh
+      />
+      <div className="flex flex-col justify-start basis-1">
+        <h1>
+          <WordRotate 
+            className="text-4xl lg:text-8xl font-bold text-black dark:text-white"
+            words={["Selamat Datang!", "R I M A", "Kamus Rima Indonesia"]}
+          />
+        </h1>
       </div>
+      <div className='h-10'></div>
+      <MainForm
+        autoFocus={true}
+        home={false}
+      />
+      <div className='h-10'></div>
     </div>
   );
 }

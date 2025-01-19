@@ -85,7 +85,7 @@ const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
     const querySnapshot = await getDocs(
       query(
         collection(firestore, "entries"),
-        limit(opts?.limit || 50),
+        limit(opts?.limit || 25),
         // orderBy("numOfSyllables", "desc"),
         ...conditions
       )
