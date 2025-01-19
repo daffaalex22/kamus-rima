@@ -21,6 +21,7 @@ import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import { getRimaTypeFromTitle, rimaTypeToCode } from "../utils";
 import { Skeleton } from "@/components/ui/skeleton"
+import { InteractiveHoverButton } from './ui/interactive-hover-button';
 
 // type CardProps = React.ComponentProps<typeof Card>
 
@@ -73,25 +74,18 @@ export function RimaCard({ className, ...props }) {
                 </TableCell>
               </TableRow>
             ))}
-            {/* {loading && [0, 1, 2, 3, 4].map((item) => (
-              <TableRow key={item}>
-                <TableCell>
-                  <Skeleton className="h-9 w-full"/>
-                </TableCell>
-              </TableRow>
-            ))} */}
           </TableBody>
         </Table>
       </CardContent>
       <CardFooter>
-        <Button 
-          className="w-full"
+        <InteractiveHoverButton 
+          className="w-full rounded-md"
           onClick={() => (
             navigate(`/details/${word}/${rimaTypeCode}`
           ))}
         >
           Selengkapnya...
-        </Button>
+        </InteractiveHoverButton>
       </CardFooter>
     </Card>
   )

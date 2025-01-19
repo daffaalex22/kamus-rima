@@ -55,38 +55,39 @@ const SearchDetails = () => {
 
   return (
     <>
-      <Progress value={loadingProgress} className="fixed z-20 top-0 left-0 h-0.5 w-screen"/>
-      <div className="sticky top-0 p-5 left-0 w-full bg-background z-10 shadow-sm">
-        <div className="flex items-center justify-center z-5 bg-background">
-          <MainForm 
-            home={false}
-            back={true}
-            resultFor={word}
-          />
+      <div className="py-6 sm:p-10">
+        <Progress value={loadingProgress} className="fixed z-20 top-0 left-0 h-0.5 w-screen"/>
+        <div className="sticky top-0 py-5 sm:p-5 left-0 w-full bg-background z-10 shadow-sm">
+          <div className="flex items-center justify-center z-5 bg-background">
+            <MainForm 
+              home={false}
+              back={true}
+              resultFor={word}
+            />
+          </div>
+          <br />
+          <h4 className="scroll-m-20 text-md font-semibold tracking-tight">{codeToRimaType[rimaTypeCode].replace(/\b\w/g, char => char.toUpperCase()).replace(/-/g, " ")} untuk: <i>{word}</i></h4>
         </div>
-        <br />
-        <h4 className="scroll-m-20 text-md font-semibold tracking-tight">{codeToRimaType[rimaTypeCode].replace(/\b\w/g, char => char.toUpperCase()).replace(/-/g, " ")} untuk: <i>{word}</i></h4>
+
+        {/* Content */}
+        {data.map((item, index) => (
+            <Button 
+              key={index} 
+              variant='outline' 
+              className='m-1 mt-2'
+              onClick={() => handleCopy(item.title)}
+            >
+              {item.title}
+            </Button>
+          ))
+        }
+        <Button
+          className='m-1 mt-2'
+          onClick={() => handleMore()}
+        >
+          Lebih banyak...
+        </Button>
       </div>
-
-      {/* Content */}
-      {data.map((item, index) => (
-          <Button 
-            key={index} 
-            variant='outline' 
-            className='m-1 mt-2'
-            onClick={() => handleCopy(item.title)}
-          >
-            {item.title}
-          </Button>
-        ))
-      }
-      <Button
-        className='m-1 mt-2'
-        onClick={() => handleMore()}
-      >
-        Lebih banyak...
-      </Button>
-
     </>
   );
 }

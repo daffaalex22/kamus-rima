@@ -3,12 +3,15 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, House, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const MainForm = ({ className, ...props }) => {
   const home = props?.home !== false;
   const back = props?.back === true;
   const resultFor = props?.resultFor;
+  const autoFocus = props?.autoFocus;
+
+  const inputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -17,6 +20,12 @@ const MainForm = ({ className, ...props }) => {
   const handleChange = (event) => {
     setSearchWord(event.target.value.toLowerCase());
   };
+
+  useEffect(() => {
+      if (inputRef.current && autoFocus) {
+        inputRef.current.focus();
+      }
+  }, [])
 
   return (
     <div className="flex w-full max-w-sm space-x-2">
@@ -28,6 +37,7 @@ const MainForm = ({ className, ...props }) => {
       }
 
       <Input 
+        ref={inputRef}
         placeholder="Masukkan kata..."
         type="text"
         value={searchWord}
