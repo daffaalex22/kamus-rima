@@ -20,12 +20,13 @@ import { useState } from 'react';
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import { getRimaTypeFromTitle, rimaTypeToCode } from "../utils";
+import { Skeleton } from "@/components/ui/skeleton"
 
 // type CardProps = React.ComponentProps<typeof Card>
 
 export function RimaCard({ className, ...props }) {
-  const { title, description, data } = props;
-  const words = data?.length > 0 ? data : []
+  const { title, description, data, loading } = props;
+  const words = data?.length > 0 ? data : [0, 1, 2, 3, 4]
 
   const rimaType = getRimaTypeFromTitle(title);
   const rimaTypeCode = rimaTypeToCode[rimaType];
@@ -58,18 +59,27 @@ export function RimaCard({ className, ...props }) {
           <TableBody>
             {words.map((w) => (
               <TableRow key={w.title}>
-                <TableCell className="text-left">{w.title}</TableCell>
+                <TableCell className="text-left">
+                  {loading ? <Skeleton className="h-6 w-40"/>: w.title}
+                </TableCell>
                 <TableCell className="text-right flex justify-end">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleCopy(w.title)}
-                >
-                  {copied[w.title] ? <Check size={16}/> : <Copy size={16} />}
-                </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleCopy(w.title)}
+                  >
+                    {copied[w.title] ? <Check size={16}/> : <Copy size={16} />}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
+            {/* {loading && [0, 1, 2, 3, 4].map((item) => (
+              <TableRow key={item}>
+                <TableCell>
+                  <Skeleton className="h-9 w-full"/>
+                </TableCell>
+              </TableRow>
+            ))} */}
           </TableBody>
         </Table>
       </CardContent>
