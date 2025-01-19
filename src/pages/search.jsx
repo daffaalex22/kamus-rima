@@ -24,12 +24,12 @@ const Search = () => {
     [RIMA.AKHIR_TAK_SEMPURNA]: true,
   });
 
-  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(10);
 
   useEffect(() => {
     Object.keys(loading).forEach((key, index) => {
       if (loading[key]) return
-      setTimeout(() => setLoadingProgress(prev => prev + 25), index * 200);
+      setTimeout(() => setLoadingProgress(prev => prev + 22.5), index * 100);
     })
   }, [loading])
   
