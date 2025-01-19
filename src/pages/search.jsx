@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchWordsRhymeWith, RIMA, RIMA_CODE } from '../utils';
 import MainForm from './../components/main-form';
+import { Progress } from '@/components/ui/progress';
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -21,7 +22,17 @@ const Search = () => {
     [RIMA.AWAL]: true,
     [RIMA.AKHIR_GANDA]: true,
     [RIMA.AKHIR_TAK_SEMPURNA]: true,
-  })
+  });
+
+  const [loadingProgress, setLoadingProgress] = useState(0);
+
+  useEffect(() => {
+    Object.keys(loading).forEach((key, index) => {
+      if (loading[key]) return
+      setTimeout(() => setLoadingProgress(prev => prev + 25), index * 200);
+    })
+  }, [loading])
+  
 
   useEffect(() => {
     fetchWordsRhymeWith(
@@ -76,6 +87,7 @@ const Search = () => {
 
   return (
     <>
+      <Progress value={loadingProgress} className="fixed z-20 top-0 left-0 h-0.5 w-screen"/>
       <div className="sticky top-0 py-5 sm:p-5 left-0 w-full bg-background z-10 shadow-sm">
         <div className="flex items-center justify-center z-5 bg-background">
           <MainForm />
