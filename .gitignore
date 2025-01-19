@@ -27,3 +27,4 @@ tutorial-ideas
 node_modules
 
 config.json
+.env
