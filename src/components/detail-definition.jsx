@@ -18,11 +18,20 @@ import {
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { SquareArrowOutUpRight } from "lucide-react";
+import { Skeleton } from '@/components/ui/skeleton';
 
 const DetailDefinition = ({ className, ...props }) => {
-  const { selectedEntry, definition, openEntryDetail, setOpenEntryDetail } = props;
+  const { 
+    selectedEntry, 
+    definition, 
+    openEntryDetail, 
+    setOpenEntryDetail,
+    loading
+  } = props;
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const hasDefinition = definition && !loading;
 
   if (isDesktop) {
     return (
@@ -30,13 +39,21 @@ const DetailDefinition = ({ className, ...props }) => {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="mb-3">{selectedEntry}</DialogTitle>
-            {definition ?
+            {hasDefinition ?
               <DialogDescription
                 dangerouslySetInnerHTML={{__html: definition}}
               /> : 
               <DialogDescription>
-                <i>Pratinjau definisi tidak tersedia. <br />
-                Buka laman KBBI untuk meninjau definisi lengkap.</i>
+                {loading ? 
+                  <>
+                    <Skeleton className="h-4 w-full mb-1.5"/>
+                    <Skeleton className="h-4 w-full mb-1.5"/>
+                    <Skeleton className="h-4 w-full mb-1.5"/>
+                    <Skeleton className="h-4 w-1/2"/>
+                  </> :
+                  <i>Pratinjau definisi tidak tersedia. <br />
+                  Buka laman KBBI untuk meninjau definisi lengkap.</i>
+                }
               </DialogDescription>
             }
           </DialogHeader>

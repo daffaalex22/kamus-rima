@@ -12,6 +12,7 @@ const SearchDetails = () => {
   const [lastIndex, setLastIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingDefinition, setLoadingDefinition] = useState(true);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [openEntryDetail, setOpenEntryDetail] = useState(null);
   const [definition, setDefinition] = useState(null);
@@ -20,16 +21,23 @@ const SearchDetails = () => {
   const { toast } = useToast();
 
   const handleCopy = async (id) => {
-    setSelectedEntry(id);
     setOpenEntryDetail(true);
+
+    setSelectedEntry(id);
     await navigator.clipboard.writeText(id);
+
     toast({ 
       description: "Teks berhasil disalin.", 
       className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10",
       duration: 2000
     });
+
+    setLoadingDefinition(true);
     fetchDefinition(id)
-      .then(data => setDefinition(data))
+      .then(data => {
+        setDefinition(data)
+        setLoadingDefinition(false)
+      })
       .catch(error => console.error(error));
   }
 
@@ -101,6 +109,7 @@ const SearchDetails = () => {
       <DetailDefinition
         selectedEntry={selectedEntry}
         definition={definition}
+        loading={loadingDefinition}
         openEntryDetail={openEntryDetail}
         setOpenEntryDetail={setOpenEntryDetail}
       />
