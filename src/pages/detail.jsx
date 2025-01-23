@@ -16,6 +16,7 @@ const SearchDetails = () => {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [openEntryDetail, setOpenEntryDetail] = useState(null);
   const [definition, setDefinition] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
   
   const { word, rimaTypeCode } = useParams();
   const { toast } = useToast();
@@ -66,6 +67,13 @@ const SearchDetails = () => {
     fetchWordsRhymeWith(word, rimaTypeCode, { lastIndex })
       .then(({ items, lastIndex: index }) => {
         setData(prevData => [...prevData, ...items]);
+        if (!index && items.length === 0) {
+          setHasMore(false);
+          toast({ 
+            description: "Tidak ada lagi hasil.", 
+            className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10" 
+          });
+        }
         setLastIndex(index);
         setLoading(false);
       })
@@ -99,12 +107,14 @@ const SearchDetails = () => {
             </Button>
           ))
         }
-        <Button
-          className='m-1 mt-2'
-          onClick={() => handleMore()}
-        >
-          Lebih banyak...
-        </Button>
+        {hasMore &&
+          <Button
+            className='m-1 mt-2'
+            onClick={() => handleMore()}
+          >
+            Lebih banyak...
+          </Button>
+        }
       </div>
       <DetailDefinition
         selectedEntry={selectedEntry}

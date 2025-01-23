@@ -82,11 +82,27 @@ const DetailDefinition = ({ className, ...props }) => {
           >
             {selectedEntry}
           </DrawerTitle>
-          <DrawerDescription
-            className="text-left"
-            dangerouslySetInnerHTML={{__html: definition}}
-          >
-          </DrawerDescription>
+          {hasDefinition ?
+            <DrawerDescription
+              className="text-left"
+              dangerouslySetInnerHTML={{__html: definition}}
+            /> : 
+            <DrawerDescription
+              className="text-left"
+            >
+              {loading ? 
+                <>
+                  <Skeleton className="h-4 w-full mb-1.5"/>
+                  <Skeleton className="h-4 w-full mb-1.5"/>
+                  <Skeleton className="h-4 w-full mb-1.5"/>
+                  <Skeleton className="h-4 w-1/2"/>
+                </> :
+                <i>Pratinjau definisi tidak tersedia. <br />
+                Buka laman KBBI untuk meninjau definisi lengkap.</i>
+              }
+            </DrawerDescription>
+          }
+          
         </DrawerHeader>
         <DrawerFooter>
         <Button
