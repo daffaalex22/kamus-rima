@@ -100,6 +100,7 @@ const Search = () => {
         <div className="flex flex-wrap min-h-full items-start justify-evenly mt-4 sm:mt-8">
           <div className="flex mb-6 w-full max-w-sm space-x-2">
             <RimaCard
+              key={RIMA.AWAL}
               loading={loading[RIMA.AWAL]}
               data={RAData}
               title="Rima Awal"
@@ -108,6 +109,7 @@ const Search = () => {
           </div>
           <div className="flex mb-6 w-full max-w-sm space-x-2">
             <RimaCard
+              key={RIMA.AKHIR_SEMPURNA}
               loading={loading[RIMA.AKHIR_SEMPURNA]}
               data={RASData}
               title="Rima Akhir Sempurna"
@@ -116,6 +118,7 @@ const Search = () => {
           </div>
           <div className="flex mb-6 w-full max-w-sm space-x-2">
             <RimaCard
+              key={RIMA.AKHIR_TAK_SEMPURNA}
               loading={loading[RIMA.AKHIR_TAK_SEMPURNA]}
               data={RATSData}
               title="Rima Akhir Tak Sempurna"
@@ -124,6 +127,7 @@ const Search = () => {
           </div>
           <div className="flex w-full max-w-sm space-x-2">
             <RimaCard
+              key={RIMA.AKHIR_GANDA}
               loading={loading[RIMA.AKHIR_GANDA]}
               data={RAGData}
               title="Rima Akhir Ganda"

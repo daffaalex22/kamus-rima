@@ -2,25 +2,35 @@ import { Button } from '@/components/ui/button';
 import { useParams } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
-import { codeToRimaType, fetchWordsRhymeWith } from '../utils';
+import { codeToRimaType, fetchDefinition, fetchWordsRhymeWith } from '../utils';
 import { Progress } from '@/components/ui/progress';
 import MainForm from './../components/main-form';
+import DetailDefinition from './../components/detail-definition';
 
 const SearchDetails = () => {
   const [data, setData] = useState([]);
   const [lastIndex, setLastIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [openEntryDetail, setOpenEntryDetail] = useState(null);
+  const [definition, setDefinition] = useState(null);
   
   const { word, rimaTypeCode } = useParams();
   const { toast } = useToast();
 
   const handleCopy = async (id) => {
-    await navigator.clipboard.writeText(id)
+    setSelectedEntry(id);
+    setOpenEntryDetail(true);
+    await navigator.clipboard.writeText(id);
     toast({ 
       description: "Teks berhasil disalin.", 
-      className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10" 
+      className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10",
+      duration: 2000
     });
+    fetchDefinition(id)
+      .then(data => setDefinition(data))
+      .catch(error => console.error(error));
   }
 
   useEffect(() => {
@@ -71,7 +81,7 @@ const SearchDetails = () => {
 
         {/* Content */}
         {data.map((item, index) => (
-            <Button 
+            <Button
               key={index} 
               variant='outline' 
               className='m-1 mt-2'
@@ -88,6 +98,12 @@ const SearchDetails = () => {
           Lebih banyak...
         </Button>
       </div>
+      <DetailDefinition
+        selectedEntry={selectedEntry}
+        definition={definition}
+        openEntryDetail={openEntryDetail}
+        setOpenEntryDetail={setOpenEntryDetail}
+      />
     </>
   );
 }

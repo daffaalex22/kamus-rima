@@ -1,6 +1,7 @@
 import { collection, getDocs, limit, query, startAfter, where } from "firebase/firestore";
 import { segmenter } from "./segmenter";
 import { firestore } from "../firebase";
+import parse from "node-html-parser";
 
 const RIMA = {
   AKHIR_SEMPURNA: 'rima-akhir-sempurna',
@@ -86,7 +87,6 @@ const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
       query(
         collection(firestore, "entries"),
         limit(opts?.limit || 25),
-        // orderBy("numOfSyllables", "desc"),
         ...conditions
       )
     );
@@ -97,23 +97,93 @@ const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
     return { items, lastIndex }
   };
 
-  // const fetchRDBData = async () => {
-  //   const dataRef = ref(rdb, "entries");
-
-  //   try {
-  //     const snapshot = await get(rdbQuery(dataRef, limitToFirst(10)));
-  //     if (snapshot.exists()) {
-  //       setRDBData(Object.values(snapshot.val()));
-  //     } else {
-  //       console.log("No data available");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching data: ", error);
-  //   }
-  // }
-
   return fetchData();
-  // fetchRDBData();
 }
 
-export { getRimaTypeFromTitle, codeToRimaType, rimaTypeToCode, RIMA, fetchWordsRhymeWith, RIMA_CODE };
+const fetchDefinition = (word) => {
+  return fetch(`http://localhost:8080/https://kbbi.web.id/${word}`, {
+    headers: {
+      'Origin': 'http://localhost:5173', // or your actual origin
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      return response.text();
+    })
+    .then(data => {
+      const root = parse(data);
+      const div1 = root.getElementById("d1");
+
+      if (!div1) return null;
+
+      return getMainDefinition(word, div1);
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+      throw error;
+    });
+};
+
+const getMainDefinition = (word, expandedDefinition) => {
+  let content = expandedDefinition.innerHTML;
+
+  // Step 4: Create a temporary div to parse the content
+  let tempDiv = document.createElement('div');
+  tempDiv.innerHTML = content;
+
+  // Step 5: Get all child nodes of the temp div
+  let childNodes = Array.from(tempDiv.childNodes);
+
+  // Step 6: Create a container to hold the new divs
+  let divs = {};  // Store divs in an object by their id
+
+  let currentElement = "";
+  childNodes.forEach(node => {
+    if (node.nodeName === "BR") {
+      currentElement = "";
+    } else if (node.nodeName === 'B' && node.textContent.length > 1) {
+      let newDiv = document.createElement('div');
+
+      newDiv.innerHTML = node.outerHTML;
+      let boldElement = newDiv.querySelector('b');
+
+      // Skipping the additional definitions
+      if (
+        boldElement &&
+        boldElement.textContent.trim().startsWith('--')
+      ) {
+        return;
+      }
+
+      // Getting the key
+      if (boldElement) {
+        let boldText = boldElement.textContent.trim();
+        let cleanText = boldText.replace(/[^A-Za-z-]/g, '');
+        newDiv.id = cleanText;
+      }
+
+      divs[newDiv.id] = newDiv;
+      currentElement = newDiv.id;
+    } else if (currentElement) {
+      const curr = divs[currentElement];
+      curr.appendChild(node);
+      divs[currentElement] = curr;
+    }
+  });
+
+  return divs[word]?.innerHTML
+};
+
+export {
+  getRimaTypeFromTitle,
+  codeToRimaType,
+  rimaTypeToCode,
+  RIMA,
+  RIMA_CODE,
+  fetchWordsRhymeWith,
+  fetchDefinition
+};

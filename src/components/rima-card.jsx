@@ -43,7 +43,8 @@ export function RimaCard({ className, ...props }) {
     await navigator.clipboard.writeText(id)
     toast({ 
       description: "Teks berhasil disalin.",
-      className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10"
+      className: "sm:max-w-[225px] sm:absolute sm:bottom-4 sm:right-10",
+      duration: 2000
     });
     setCopied((prev) => ({ ...prev, [id]: true }));
     setTimeout(() => setCopied((prev) => ({ ...prev, [id]: false })), 2000);
