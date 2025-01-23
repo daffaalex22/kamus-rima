@@ -43,7 +43,12 @@ const MainForm = ({ className, ...props }) => {
         value={searchWord}
         onChange={handleChange}
       />
-      <Button type="submit" onClick={() => navigate(`/search?word=${searchWord}`)}>
+      <Button 
+        type="submit" 
+        onClick={() => navigate(`/search?word=${searchWord}`)}
+        className="sm:pl-3"
+      >
+        <Search className="max-sm:hidden"/>
         <span className="hidden sm:inline">Temukan rima</span>
         <span className="inline sm:hidden"><Search /></span>
       </Button>

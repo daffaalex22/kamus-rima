@@ -12,10 +12,12 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from "@uidotdev/usehooks";
+import { SquareArrowOutUpRight } from "lucide-react";
 
 const DetailDefinition = ({ className, ...props }) => {
   const { selectedEntry, definition, openEntryDetail, setOpenEntryDetail } = props;
@@ -28,11 +30,24 @@ const DetailDefinition = ({ className, ...props }) => {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="mb-3">{selectedEntry}</DialogTitle>
-            <DialogDescription
-              dangerouslySetInnerHTML={{__html: definition}}
-            >
-            </DialogDescription>
+            {definition ?
+              <DialogDescription
+                dangerouslySetInnerHTML={{__html: definition}}
+              /> : 
+              <DialogDescription>
+                <i>Pratinjau definisi tidak tersedia. <br />
+                Buka laman KBBI untuk meninjau definisi lengkap.</i>
+              </DialogDescription>
+            }
           </DialogHeader>
+          <DialogFooter>
+            <Button
+              onClick={() => {window.open(`https://kbbi.kemdikbud.go.id/entri/${selectedEntry}`, '_blank');}}
+            >
+              <SquareArrowOutUpRight />
+              Buka laman KBBI
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     )
@@ -57,9 +72,12 @@ const DetailDefinition = ({ className, ...props }) => {
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter>
-          <DrawerClose asChild>
-            <Button>Tutup</Button>
-          </DrawerClose>
+        <Button
+          onClick={() => {window.open(`https://kbbi.kemdikbud.go.id/entri/${selectedEntry}`, '_blank');}}
+        >
+          <SquareArrowOutUpRight />
+          Buka laman KBBI
+        </Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
