@@ -101,7 +101,7 @@ const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
 }
 
 const fetchDefinition = (word) => {
-  return fetch(`http://localhost:8080/https://kbbi.web.id/${word}`, {
+  return fetch(`https://api.allorigins.win/raw?url=https://kbbi.web.id/${word}`, {
     headers: {
       'Origin': 'http://localhost:5173', // or your actual origin
       'X-Requested-With': 'XMLHttpRequest'
