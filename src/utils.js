@@ -75,7 +75,31 @@ const getFirestoreConditions = (word, rimaTypeCode) => {
   return conditions;
 }
 
+const checkRateLimit = () => {
+  const now = Date.now();
+  const lastRequest = localStorage.getItem('lastRequest');
+  const requestCount = parseInt(localStorage.getItem('requestCount') || '0');
+
+  if (!lastRequest || now - parseInt(lastRequest) > 60000) {
+    // Reset counter after 1 minute
+    localStorage.setItem('requestCount', '1');
+    localStorage.setItem('lastRequest', now.toString());
+    return true;
+  }
+
+  if (requestCount >= 20) { // 100 requests per minute limit
+    return false;
+  }
+
+  localStorage.setItem('requestCount', (requestCount + 1).toString());
+  return true;
+};
+
 const fetchWordsRhymeWith = (word, rimaTypeCode, opts = {}) => {
+  if (!checkRateLimit()) {
+    throw new Error('Rate limit exceeded. Please try again later.');
+  }
+
   const conditions = getFirestoreConditions(word, rimaTypeCode)
 
   if (opts?.lastIndex) {

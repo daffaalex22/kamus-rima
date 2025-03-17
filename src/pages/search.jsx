@@ -18,11 +18,16 @@ const Search = () => {
   const raQuery = useRhymes(word, RIMA_CODE.AWAL, { limit: 5 });
 
   const loading = useMemo(() => ({
-    [RIMA.AKHIR_SEMPURNA]: rasQuery.isLoading,
-    [RIMA.AKHIR_TAK_SEMPURNA]: ratsQuery.isLoading,
-    [RIMA.AKHIR_GANDA]: ragQuery.isLoading,
-    [RIMA.AWAL]: raQuery.isLoading,
-  }), [rasQuery.isLoading, ratsQuery.isLoading, ragQuery.isLoading, raQuery.isLoading]);
+    [RIMA.AKHIR_SEMPURNA]: rasQuery.isLoading || rasQuery.isError,
+    [RIMA.AKHIR_TAK_SEMPURNA]: ratsQuery.isLoading || ratsQuery.isError,
+    [RIMA.AKHIR_GANDA]: ragQuery.isLoading || ragQuery.isError,
+    [RIMA.AWAL]: raQuery.isLoading || raQuery.isError,
+  }), [
+    rasQuery.isLoading, rasQuery.isError,
+    ratsQuery.isLoading, ratsQuery.isError,
+    ragQuery.isLoading, ragQuery.isError,
+    raQuery.isLoading, raQuery.isError
+  ]);
 
   useEffect(() => {
     const loadedCount = Object.values(loading).filter(l => !l).length;
@@ -46,7 +51,7 @@ const Search = () => {
             <RimaCard
               key={RIMA.AWAL}
               loading={loading[RIMA.AWAL]}
-              data={raQuery.data?.items || []}
+              data={!raQuery.isError ? raQuery.data?.items || [] : []}
               title="Rima Awal"
               description="Persamaan bunyi pada suku kata pertama"
             />
@@ -55,7 +60,7 @@ const Search = () => {
             <RimaCard
               key={RIMA.AKHIR_SEMPURNA}
               loading={loading[RIMA.AKHIR_SEMPURNA]}
-              data={rasQuery.data?.items || []}
+              data={!rasQuery.isError ? rasQuery.data?.items || [] : []}
               title="Rima Akhir Sempurna"
               description="Persamaan bunyi pada suku kata terakhir"
             />
@@ -63,8 +68,8 @@ const Search = () => {
           <div className="flex mb-6 w-full max-w-sm space-x-2">
             <RimaCard
               key={RIMA.AKHIR_TAK_SEMPURNA}
-              loading={loading[RIMA.AKHIR_TAK_SEMPURNA]}
-              data={ratsQuery.data?.items || []}
+              loading={loading[RIMA.AKHIR_TAK_SEMPURNA]} 
+              data={!ratsQuery.isError ? ratsQuery.data?.items || [] : []}
               title="Rima Akhir Tak Sempurna"
               description="Persamaan bunyi pada bagian suku kata terakhir"
             />
@@ -73,7 +78,7 @@ const Search = () => {
             <RimaCard
               key={RIMA.AKHIR_GANDA}
               loading={loading[RIMA.AKHIR_GANDA]}
-              data={ragQuery.data?.items || []}
+              data={!ragQuery.isError ? ragQuery.data?.items || [] : []}
               title="Rima Akhir Ganda"
               description="Persamaan bunyi pada dua suku kata terakhir"
             />
