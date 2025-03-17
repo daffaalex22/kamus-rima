@@ -21,6 +21,16 @@ const MainForm = ({ className, ...props }) => {
     setSearchWord(event.target.value.toLowerCase());
   };
 
+  const handleSearch = () => {
+    navigate(`/search?word=${searchWord}`);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   useEffect(() => {
       if (inputRef.current && autoFocus) {
         inputRef.current.focus();
@@ -42,10 +52,11 @@ const MainForm = ({ className, ...props }) => {
         type="text"
         value={searchWord}
         onChange={handleChange}
+        onKeyPress={handleKeyPress}
       />
       <Button 
         type="submit" 
-        onClick={() => navigate(`/search?word=${searchWord}`)}
+        onClick={handleSearch}
         className="sm:pl-3"
       >
         <Search className="max-sm:hidden"/>
