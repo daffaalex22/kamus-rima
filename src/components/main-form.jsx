@@ -4,38 +4,38 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, House, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
-const MainForm = ({ className, ...props }) => {
-  const home = props?.home !== false;
-  const back = props?.back === true;
-  const resultFor = props?.resultFor;
-  const autoFocus = props?.autoFocus;
-
+const MainForm = ({ 
+  home = true, 
+  back = false, 
+  resultFor = '', 
+  autoFocus = false 
+}) => {
   const inputRef = useRef(null);
-
   const navigate = useNavigate();
-
-  const [searchWord, setSearchWord] = useState("")
+  const [searchWord, setSearchWord] = useState("");
 
   const handleChange = (event) => {
     setSearchWord(event.target.value.toLowerCase());
   };
 
   const handleSearch = () => {
-    navigate(`/search?word=${searchWord}`);
+    if (!searchWord.trim()) return;
+    navigate(`/search?word=${encodeURIComponent(searchWord.trim())}`);
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleSearch();
     }
   };
 
   useEffect(() => {
-      if (inputRef.current && autoFocus) {
-        inputRef.current.focus();
-      }
-  }, [])
+    if (inputRef.current && autoFocus) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
 
   return (
     <div className="flex w-full max-w-sm space-x-2">
@@ -52,7 +52,7 @@ const MainForm = ({ className, ...props }) => {
         type="text"
         value={searchWord}
         onChange={handleChange}
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyDown}
       />
       <Button 
         type="submit" 
@@ -67,5 +67,13 @@ const MainForm = ({ className, ...props }) => {
     </div>
   )
 }
+
+MainForm.propTypes = {
+  className: PropTypes.string,
+  home: PropTypes.bool,
+  back: PropTypes.bool,
+  resultFor: PropTypes.string,
+  autoFocus: PropTypes.bool
+};
 
 export default MainForm;
